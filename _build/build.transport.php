@@ -20,13 +20,28 @@ $builder = new modPackageBuilder($modx);
 $builder->create('breadcrumbs','0.9','d');
 
 $sources= array (
-    'assets' => dirname(dirname(__FILE__)) . '/assets/'
+    'root' => dirname(dirname(__FILE__)) . '/',
+    'assets' => dirname(dirname(__FILE__)) . '/assets/',
 );
 
 // get the source from the actual snippet in your database
 // [alternative] you could also manually create the object, grabbing the source from a file
 $c= $modx->getObject('modSnippet', array ('name' => 'BreadCrumbs'));
-$c->set('category', 0);
+if ( !is_null($c) ) {
+	$c->set('category', 0);
+}
+/*
+ * Mod by conseilsweb - you can remove this comment when we know it works
+ * If the object isn't found, try to load from source
+ */
+else
+{
+	$c= $modx->newObject('modSnippet');
+	$c->set('name', 'Breadcrumbs');
+	$c->set('description', '<strong>0.9d</strong> Show the path through the various levels of site structure back to the root.');
+	$c->set('category', 0);
+	$c->set('snippet', file_get_contents($sources['assets'] . 'snippets/breadcrumbs/breadcrumbs.snippet.php'));
+}
 $vehicle = $builder->createVehicle($c);
 $vehicle->resolve('file',array(
     'source' => $sources['assets'] . 'snippets/breadcrumbs',
