@@ -8,9 +8,9 @@ $tstart = $mtime;
 set_time_limit(0);
 
 // override with your own defines here (see build.config.sample.php)
-require_once ('build.config.php');
+require_once dirname(__FILE__).'/build.config.php';
 
-require_once (MODX_CORE_PATH . 'model/modx/modx.class.php');
+require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 $modx= new modX();
 $modx->initialize('mgr');
 //$modx->setDebug(true);
