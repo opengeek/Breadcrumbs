@@ -52,7 +52,7 @@ class BreadCrumbs {
 				$descriptionToUse = ($resource->get($this->config['descField']))
 					? $resource->get($this->config['descField'])
 					: $resource->pagetitle;
-				$this->_crumbs[] = '<a class="B_currentCrumb" href="[~'.$this->modx->documentIdentifier.'~]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
+				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->documentIdentifier.']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
 
 			} else {
 				$this->_crumbs[] = '<span class="B_currentCrumb">'.$resource->pagetitle.'</span>';
@@ -83,22 +83,22 @@ class BreadCrumbs {
 		}
 		$parent = $this->modx->getObject('modResource',$wa);
 
-		if ($parent->id != $this->modx->config['site_start']) {
-			if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent['hidemenu'] != 1)) {
+		if ($parent->get('id') != $this->modx->config['site_start']) {
+			if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
 				$titleToShow = $parent->get($this->config['titleField'])
 					? $parent->get($this->config['titleField'])
-					: $parent->pagetitle;
+					: $parent->get('pagetitle');
 				$descriptionToUse = $parent->get($this->config['descField'])
 					? $parent->get($this->config['descField'])
-					: $parent->pagetitle;
+					: $parent->get('pagetitle');
 
-				$this->_crumbs[] = '<a class="B_crumb" href="[~'.$parent->id.'~]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
+				$this->_crumbs[] = '<a class="B_crumb" href="[[~'.$parent->get('id').']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
 			}
 		} // end if
 
 		$count++;
-		if ($parent->parent != 0) {
-			$this->getMiddleCrumbs($parent->parent,$count);
+		if ($parent->get('parent') != 0) {
+			$this->getMiddleCrumbs($parent->get('parent'),$count);
 		}
 	}
 
@@ -120,7 +120,7 @@ class BreadCrumbs {
 
 		// add home link if desired
 		if ($this->config['showHomeCrumb'] && ($this->modx->documentIdentifier != $this->modx->config['site_start'])) {
-			$this->_crumbs[] = '<a class="B_homeCrumb" href="[~'.$this->modx->config['site_start'].'~]" title="'.$this->config['homeCrumbDescription'].'">'.$this->config['homeCrumbTitle'].'</a>';
+			$this->_crumbs[] = '<a class="B_homeCrumb" href="[[~'.$this->modx->config['site_start'].']]" title="'.$this->config['homeCrumbDescription'].'">'.$this->config['homeCrumbTitle'].'</a>';
 		}
 
 		$this->_crumbs = array_reverse($this->_crumbs);
