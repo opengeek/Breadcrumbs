@@ -52,7 +52,7 @@ class BreadCrumbs {
 				$descriptionToUse = ($resource->get($this->config['descField']))
 					? $resource->get($this->config['descField'])
 					: $resource->pagetitle;
-				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->documentIdentifier.']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
+				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->resource->id.']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
 
 			} else {
 				$this->_crumbs[] = '<span class="B_currentCrumb">'.$resource->pagetitle.'</span>';
@@ -112,14 +112,14 @@ class BreadCrumbs {
 		|| ($this->modx->documentIdentifier == $this->modx->config['site_start'])) return false;
 
 		// get current resource parent info
-		$resource = $this->modx->getObject('modResource',$this->modx->documentIdentifier);
+		$resource = $this->modx->resource;
 
 		// assemble intermediate crumbs
 		$crumbCount = 0;
 		$this->getMiddleCrumbs($resource->id,$crumbCount);
 
 		// add home link if desired
-		if ($this->config['showHomeCrumb'] && ($this->modx->documentIdentifier != $this->modx->config['site_start'])) {
+		if ($this->config['showHomeCrumb'] && ($this->modx->resource->id != $this->modx->config['site_start'])) {
 			$this->_crumbs[] = '<a class="B_homeCrumb" href="[[~'.$this->modx->config['site_start'].']]" title="'.$this->config['homeCrumbDescription'].'">'.$this->config['homeCrumbTitle'].'</a>';
 		}
 
