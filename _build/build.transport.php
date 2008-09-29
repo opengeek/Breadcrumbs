@@ -3,30 +3,31 @@ $mtime = microtime();
 $mtime = explode(" ", $mtime);
 $mtime = $mtime[1] + $mtime[0];
 $tstart = $mtime;
-
 // get rid of time limit
 set_time_limit(0);
+$root = dirname(dirname(__FILE__)) . '/';
+$sources= array (
+    'root' => $root,
+    'assets' => $root . 'assets/',
+    'build' => $root . '_build/',
+    'lexicon' => $root . '_build/lexicon/',
+);
 
 // override with your own defines here (see build.config.sample.php)
-require_once dirname(__FILE__).'/build.config.php';
-
+require_once $sources['build'].'build.config.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+
 $modx= new modX();
 $modx->initialize('mgr');
-//$modx->setDebug(true);
+echo '<pre>';
+$modx->setLogLevel(MODX_LOG_LEVEL_INFO);
+$modx->setLogTarget('ECHO');
 
 $modx->loadClass('transport.modPackageBuilder','',false, true);
 $builder = new modPackageBuilder($modx);
 $builder->create('breadcrumbs','0.9','d');
 $builder->registerNamespace('breadcrumbs',false);
 
-$sources= array (
-    'root' => dirname(dirname(__FILE__)) . '/',
-    'assets' => dirname(dirname(__FILE__)) . '/assets/',
-);
-
-// get the source from the actual snippet in your database
-// [alternative] you could also manually create the object, grabbing the source from a file
 $c= $modx->newObject('modSnippet');
 $c->set('name', 'Breadcrumbs');
 $c->set('description', '<strong>0.9d</strong> Show the path through the various levels of site structure back to the root.');
@@ -48,6 +49,5 @@ $tend= $mtime;
 $totalTime= ($tend - $tstart);
 $totalTime= sprintf("%2.4f s", $totalTime);
 
-echo "\nExecution time: {$totalTime}\n";
-
-exit ();
+$modx->log(MODX_LOG_LEVEL_INFO,"\n<br />Package Built.<br />\nExecution time: {$totalTime}\n");
+exit();
