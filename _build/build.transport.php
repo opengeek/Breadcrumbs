@@ -25,7 +25,7 @@ $modx->setLogTarget('ECHO');
 
 $modx->loadClass('transport.modPackageBuilder','',false, true);
 $builder = new modPackageBuilder($modx);
-$builder->create('breadcrumbs','0.9','d');
+$builder->createPackage('breadcrumbs','0.9','d');
 $builder->registerNamespace('breadcrumbs',false);
 
 $c= $modx->newObject('modSnippet');
