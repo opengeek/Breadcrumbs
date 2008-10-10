@@ -113,7 +113,7 @@
  ***************************************/
 
 // Check for home page
-$path = $modx->config['assets_path'].'snippets/breadcrumb/';
+$path = $modx->config['assets_path'].'snippets/breadcrumbs/';
 $modx->loadClass('breadcrumbs',$path,true,true);
 $BreadCrumbs = new BreadCrumbs($modx,array(
 	'maxCrumbs' => isset($maxCrumbs) ? $maxCrumbs : 100,
