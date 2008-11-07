@@ -112,8 +112,8 @@
  * THE REST SHOULD TAKE CARE OF ITSELF
  ***************************************/
 
-// Check for home page
-$path = $modx->config['assets_path'].'snippets/breadcrumbs/';
+/* Check for home page */
+$path = $modx->config['assets_path'].'components/breadcrumbs/';
 $modx->loadClass('breadcrumbs',$path,true,true);
 $BreadCrumbs = new BreadCrumbs($modx,array(
 	'maxCrumbs' => isset($maxCrumbs) ? $maxCrumbs : 100,
