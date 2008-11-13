@@ -35,13 +35,18 @@ $builder->registerNamespace('breadcrumbs',false);
 
 /* create snippet object */
 $c= $modx->newObject('modSnippet');
+$c->set('id',1);
 $c->set('name', 'Breadcrumbs');
 $c->set('description', '<strong>0.9e</strong> Show the path through the various levels of site structure back to the root.');
 $c->set('category', 0);
 $c->set('snippet', file_get_contents($sources['root'] . 'breadcrumbs/breadcrumbs.snippet.php'));
 
 /* create snippet vehicle */
-$vehicle = $builder->createVehicle($c);
+$vehicle = $builder->createVehicle($c,array(
+    XPDO_TRANSPORT_UNIQUE_KEY => 'name',
+    XPDO_TRANSPORT_PRESERVE_KEYS => false,
+    XPDO_TRANSPORT_UPDATE_OBJECT => true,
+));
 $vehicle->resolve('file',array(
     'source' => $sources['root'] . 'breadcrumbs',
     'target' => "return MODX_ASSETS_PATH . 'components/';",
