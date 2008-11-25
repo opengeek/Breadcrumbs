@@ -40,22 +40,22 @@ class BreadCrumbs {
      * @param modResource $resource The resource to load.
      */
 	function showCurrentPage($resource) {
-		// show current page, as link or not
+		/* show current page, as link or not */
 		if ($this->config['showCurrentCrumb']) {
 
 			$titleToShow = $resource->get($this->config['titleField'])
 				? $resource->get($this->config['titleField'])
-				: $resource->pagetitle;
+				: $resource->get('pagetitle');
 
-			if ($this->config['currentAsLink'] && (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $resource->hidemenu != 1 ))) {
+			if ($this->config['currentAsLink'] && (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $resource->get('hidemenu') != 1 ))) {
 
 				$descriptionToUse = ($resource->get($this->config['descField']))
 					? $resource->get($this->config['descField'])
-					: $resource->pagetitle;
-				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->resource->id.']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
+					: $resource->get('pagetitle');
+				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->resource->get('id').']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
 
 			} else {
-				$this->_crumbs[] = '<span class="B_currentCrumb">'.$resource->pagetitle.'</span>';
+				$this->_crumbs[] = '<span class="B_currentCrumb">'.$resource->get('pagetitle').'</span>';
 			}
 		}
 	}
@@ -68,7 +68,7 @@ class BreadCrumbs {
      * @param integer &$count
      */
 	function getMiddleCrumbs($resource_id,&$count) {
-		// insert '...' if maximum number of crumbs exceded
+		/* insert '...' if maximum number of crumbs exceded */
 		if ($count >= $this->config['maxCrumbs']) {
 			$this->_crumbs[] = '<span class="B_hideCrumb">...</span>';
 			return false;
@@ -94,7 +94,7 @@ class BreadCrumbs {
 
 				$this->_crumbs[] = '<a class="B_crumb" href="[[~'.$parent->get('id').']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
 			}
-		} // end if
+		} /* end if */
 
 		$count++;
 		if ($parent->get('parent') != 0) {
@@ -108,18 +108,18 @@ class BreadCrumbs {
      * @access public
      */
 	function load() {
+        /* get current resource parent info */
+        $resource = $this->modx->resource;
+
 		if ($this->config['showCrumbsAtHome']
-		|| ($this->modx->documentIdentifier == $this->modx->config['site_start'])) return false;
+		|| ($resource->get('id') == $this->modx->config['site_start'])) return false;
 
-		// get current resource parent info
-		$resource = $this->modx->resource;
-
-		// assemble intermediate crumbs
+		/* assemble intermediate crumbs */
 		$crumbCount = 0;
-		$this->getMiddleCrumbs($resource->id,$crumbCount);
+		$this->getMiddleCrumbs($resource->get('id'),$crumbCount);
 
-		// add home link if desired
-		if ($this->config['showHomeCrumb'] && ($this->modx->resource->id != $this->modx->config['site_start'])) {
+		/* add home link if desired */
+		if ($this->config['showHomeCrumb'] && ($resource->get('id') != $this->modx->config['site_start'])) {
 			$this->_crumbs[] = '<a class="B_homeCrumb" href="[[~'.$this->modx->config['site_start'].']]" title="'.$this->config['homeCrumbDescription'].'">'.$this->config['homeCrumbTitle'].'</a>';
 		}
 
