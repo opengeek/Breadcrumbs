@@ -1,0 +1,4 @@
+0.9f
+----
+- Consolidated settings into $scriptProperties, which cuts down snippet file code
+- Added initialize() function to handle default config settings
