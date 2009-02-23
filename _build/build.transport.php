@@ -37,7 +37,7 @@ $modx->setLogTarget('ECHO');
 $modx->loadClass('transport.modPackageBuilder','',false, true);
 $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME,PKG_VERSION,PKG_RELEASE);
-$builder->registerNamespace(PKG_NAME,false);
+$builder->registerNamespace(PKG_NAME,false,true,'{assets_path}components/breadcrumbs/');
 
 /* create snippet object */
 $c= $modx->newObject('modSnippet');
