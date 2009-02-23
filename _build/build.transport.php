@@ -20,8 +20,8 @@ $sources= array (
 
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
-define('PKG_VERSION','0.9');
-define('PKG_RELEASE','f');
+define('PKG_VERSION','1.0');
+define('PKG_RELEASE','alpha1');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
@@ -43,9 +43,13 @@ $builder->registerNamespace(PKG_NAME,false);
 $c= $modx->newObject('modSnippet');
 $c->set('id',1);
 $c->set('name', 'Breadcrumbs');
-$c->set('description', '<strong>'.PKG_VERSION.PKG_RELEASE.'</strong> Show the path through the various levels of site structure back to the root.');
+$c->set('description', PKG_VERSION.'-'.PKG_RELEASE.': Show the path through the various levels of site structure back to the root.');
 $c->set('category', 0);
 $c->set('snippet', file_get_contents($sources['root'] . 'breadcrumbs/breadcrumbs.snippet.php'));
+
+/* add properties */
+include_once $sources['build'].'data/properties.inc.php';
+$c->setProperties($properties,true);
 
 /* create snippet vehicle */
 $vehicle = $builder->createVehicle($c,array(
