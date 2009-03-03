@@ -191,6 +191,7 @@ class BreadCrumbs {
 			$wa['deleted'] = false;
 		}
 		$parent = $this->modx->getObject('modResource',$wa);
+        if ($parent == null) return false;
 
 		if ($parent->get('id') != $this->modx->config['site_start']) {
 			if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
