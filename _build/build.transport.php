@@ -15,13 +15,14 @@ $sources= array (
     'root' => $root,
     'build' => $root . '_build/',
     'lexicon' => $root . '_build/lexicon/',
-    'docs' => $root . 'breadcrumbs/docs/',
+    'docs' => $root . 'core/components/breadcrumbs/docs/',
+    'source_core' => $root . 'core/components/breadcrumbs',
 );
 
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
 define('PKG_VERSION','1.0');
-define('PKG_RELEASE','alpha2');
+define('PKG_RELEASE','alpha3');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
@@ -37,29 +38,29 @@ $modx->setLogTarget('ECHO');
 $modx->loadClass('transport.modPackageBuilder','',false, true);
 $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME,PKG_VERSION,PKG_RELEASE);
-$builder->registerNamespace(PKG_NAME,false,true,'{assets_path}components/breadcrumbs/');
+$builder->registerNamespace(PKG_NAME,false,true,'{core_path}components/breadcrumbs/');
 
 /* create snippet object */
-$c= $modx->newObject('modSnippet');
-$c->set('id',1);
-$c->set('name', 'Breadcrumbs');
-$c->set('description', PKG_VERSION.'-'.PKG_RELEASE.': Show the path through the various levels of site structure back to the root.');
-$c->set('category', 0);
-$c->set('snippet', file_get_contents($sources['root'] . 'breadcrumbs/breadcrumbs.snippet.php'));
+$snippet= $modx->newObject('modSnippet');
+$snippet->set('id',1);
+$snippet->set('name', 'Breadcrumbs');
+$snippet->set('description', PKG_VERSION.'-'.PKG_RELEASE.': Show the path through the various levels of site structure back to the root.');
+$snippet->set('category', 0);
+$snippet->set('snippet', file_get_contents($sources['source_core'] . '/breadcrumbs.snippet.php'));
 
 /* add properties */
 include_once $sources['build'].'data/properties.inc.php';
-$c->setProperties($properties,true);
+$snippet->setProperties($properties,true);
 
 /* create snippet vehicle */
-$vehicle = $builder->createVehicle($c,array(
+$vehicle = $builder->createVehicle($snippet,array(
     XPDO_TRANSPORT_UNIQUE_KEY => 'name',
     XPDO_TRANSPORT_PRESERVE_KEYS => false,
     XPDO_TRANSPORT_UPDATE_OBJECT => true,
 ));
 $vehicle->resolve('file',array(
-    'source' => $sources['root'] . 'breadcrumbs',
-    'target' => "return MODX_ASSETS_PATH . 'components/';",
+    'source' => $sources['source_core'],
+    'target' => "return MODX_CORE_PATH . 'components/';",
 ));
 $builder->putVehicle($vehicle);
 
