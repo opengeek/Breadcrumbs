@@ -29,7 +29,7 @@
  */
 
 /* Check for home page */
-$path = $modx->config['assets_path'].'components/breadcrumbs/';
+$path = $modx->config['core_path'].'components/breadcrumbs/';
 $modx->loadClass('breadcrumbs',$path,true,true);
 $bc = new BreadCrumbs($modx);
 $bc->initialize($scriptProperties);
