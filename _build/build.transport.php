@@ -61,7 +61,7 @@ $attr = array(
 );
 $category= $modx->newObject('modCategory');
 $category->set('id',1);
-$category->set('category','BreadCrumbs');
+$category->set('category','Breadcrumbs');
 
 /* create snippet object */
 $snippet= $modx->newObject('modSnippet');
