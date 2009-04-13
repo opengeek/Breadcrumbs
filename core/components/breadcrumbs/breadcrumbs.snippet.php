@@ -27,11 +27,9 @@
  * hide)
  * .B_homeCrumb Class given to the home crumb
  */
-
 /* Check for home page */
 $path = $modx->config['core_path'].'components/breadcrumbs/';
 $modx->loadClass('breadcrumbs',$path,true,true);
-$bc = new BreadCrumbs($modx);
-$bc->initialize($scriptProperties);
+$bc = new BreadCrumbs($modx,$scriptProperties);
 
 return $bc->run();

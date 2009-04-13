@@ -23,27 +23,12 @@ class BreadCrumbs {
      * @param modX $modx A reference to the modX constructor.
      * @param array $config A configuration array.
      */
-    function BreadCrumbs(&$modx,$config) {
-        $this->__construct($modx,$config);
+    function BreadCrumbs(&$modx,$config = array()) {
+        $this->__construct($modx,$config = array());
     }
     /** @ignore */
-    function __construct(&$modx,$config) {
+    function __construct(&$modx,$config = array()) {
         $this->modx =& $modx;
-        $this->config = $config;
-        $this->_crumbs = array();
-        $this->_tpls = array();
-    }
-    /**#@-*/
-
-    /**
-     * Initialize the default configuration parameters, allowing overrides
-     *
-     * @access public
-     * @param array $config An array of configuration parameters
-     * @return array The newly set config array
-     */
-    function initialize($config = array()) {
-        if (!is_array($config)) $config = array();
 
         $this->config = array_merge(array(
             /**
@@ -156,10 +141,10 @@ class BreadCrumbs {
             'bcTplCrumbOuter' => '<span class="B_crumbBox">[[+text]]</span>',
             'bcTplCrumb' => '<span class="B_crumb">[[+text]]</span>',
         ),$config);
-
-        return $this->config;
+        $this->_crumbs = array();
+        $this->_tpls = array();
     }
-
+    /**#@-*/
     /**
      * Show the current resource's breadcrumbs.
      *
