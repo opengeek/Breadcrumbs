@@ -1,9 +1,10 @@
 --------------------
 Snippet: Breadcrumbs
 --------------------
-Version: 0.9e
+Version: 1.0
 Date: 2008.10.08
-jaredc@honeydewdesign.com
+Author: jaredc@honeydewdesign.com
+Editor: Shaun McCormick <shaun@collabpad.com>
 Honorable mentions:
 - Bill Wilson
 - wendy@djamoer.net

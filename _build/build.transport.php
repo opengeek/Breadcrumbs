@@ -22,7 +22,7 @@ $sources= array (
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
 define('PKG_VERSION','1.0');
-define('PKG_RELEASE','alpha3');
+define('PKG_RELEASE','alpha4');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
@@ -40,6 +40,29 @@ $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME,PKG_VERSION,PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME,false,true,'{core_path}components/breadcrumbs/');
 
+/* create category */
+$attr = array(
+    XPDO_TRANSPORT_UNIQUE_KEY => 'category',
+    XPDO_TRANSPORT_PRESERVE_KEYS => false,
+    XPDO_TRANSPORT_UPDATE_OBJECT => true,
+    XPDO_TRANSPORT_RELATED_OBJECTS => true,
+    XPDO_TRANSPORT_RELATED_OBJECT_ATTRIBUTES => array (
+        'modSnippet' => array(
+            XPDO_TRANSPORT_PRESERVE_KEYS => false,
+            XPDO_TRANSPORT_UPDATE_OBJECT => true,
+            XPDO_TRANSPORT_UNIQUE_KEY => 'name',
+        ),
+        'modChunk' => array (
+            XPDO_TRANSPORT_PRESERVE_KEYS => false,
+            XPDO_TRANSPORT_UPDATE_OBJECT => true,
+            XPDO_TRANSPORT_UNIQUE_KEY => 'name',
+        ),
+    )
+);
+$category= $modx->newObject('modCategory');
+$category->set('id',1);
+$category->set('category','BreadCrumbs');
+
 /* create snippet object */
 $snippet= $modx->newObject('modSnippet');
 $snippet->set('id',1);
@@ -47,17 +70,16 @@ $snippet->set('name', 'Breadcrumbs');
 $snippet->set('description', PKG_VERSION.'-'.PKG_RELEASE.': Show the path through the various levels of site structure back to the root.');
 $snippet->set('category', 0);
 $snippet->set('snippet', file_get_contents($sources['source_core'] . '/breadcrumbs.snippet.php'));
-
-/* add properties */
 include_once $sources['build'].'data/properties.inc.php';
 $snippet->setProperties($properties,true);
+$category->addMany($snippet);
 
-/* create snippet vehicle */
-$vehicle = $builder->createVehicle($snippet,array(
-    XPDO_TRANSPORT_UNIQUE_KEY => 'name',
-    XPDO_TRANSPORT_PRESERVE_KEYS => false,
-    XPDO_TRANSPORT_UPDATE_OBJECT => true,
-));
+/* add chunks */
+$chunks = include $sources['build'].'data/chunks.inc.php';
+$category->addMany($chunks);
+
+/* create vehicle */
+$vehicle = $builder->createVehicle($category,$attr);
 $vehicle->resolve('file',array(
     'source' => $sources['source_core'],
     'target' => "return MODX_CORE_PATH . 'components/';",

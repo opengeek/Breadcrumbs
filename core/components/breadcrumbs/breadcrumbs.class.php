@@ -14,7 +14,8 @@ class BreadCrumbs {
      * @var array $_crumbs An array of crumbs stored so far.
      * @access private
      */
-	var $_crumbs;
+    var $_crumbs;
+    var $_tpls;
 
     /**#@+
      * The BreadCrumbs constructor.
@@ -22,15 +23,16 @@ class BreadCrumbs {
      * @param modX $modx A reference to the modX constructor.
      * @param array $config A configuration array.
      */
-	function BreadCrumbs(&$modx,$config) {
-		$this->__construct($modx,$config);
-	}
+    function BreadCrumbs(&$modx,$config) {
+        $this->__construct($modx,$config);
+    }
     /** @ignore */
-	function __construct(&$modx,$config) {
-		$this->modx =& $modx;
-		$this->config = $config;
-		$this->_crumbs = array();
-	}
+    function __construct(&$modx,$config) {
+        $this->modx =& $modx;
+        $this->config = $config;
+        $this->_crumbs = array();
+        $this->_tpls = array();
+    }
     /**#@-*/
 
     /**
@@ -137,6 +139,22 @@ class BreadCrumbs {
              * @var string $descField
              */
             'descField' => 'description',
+            /**
+             * The string that will show if the maximum number of breadcrumbs
+             * has been shown.
+             *
+             * @var string $max_delimiter
+             */
+            'maxDelimiter' => '...',
+            'bcTplCrumbCurrent' => '<span class="B_currentCrumb">[[+text]]</span>',
+            'bcTplCrumbCurrentLink' => '<a class="B_currentCrumb" href="[[~[[+resource]]]]" title="[[+description]]">[[+text]]</a>',
+            'bcTplCrumbFirst' => '<span class="B_firstCrumb">[[+text]]</span>',
+            'bcTplCrumbHome' => '<a class="B_homeCrumb" href="[[~[[++site_start]]]]" title="[[+description]]">[[+text]]</a>',
+            'bcTplCrumbLast' => '<span class="B_lastCrumb">[[+text]]</span>',
+            'bcTplCrumbMax' => '<span class="B_hideCrumb">[[+text]]</span>',
+            'bcTplCrumbLink' => '<a class="B_crumb" href="[[~[[+resource]]]]" title="[[+description]]">[[+text]]</a>',
+            'bcTplCrumbOuter' => '<span class="B_crumbBox">[[+text]]</span>',
+            'bcTplCrumb' => '<span class="B_crumb">[[+text]]</span>',
         ),$config);
 
         return $this->config;
@@ -148,26 +166,32 @@ class BreadCrumbs {
      * @access public
      * @param modResource $resource The resource to load.
      */
-	function showCurrentPage($resource) {
-		/* show current page, as link or not */
-		if ($this->config['showCurrentCrumb']) {
+    function showCurrentPage($resource) {
+        /* show current page, as link or not */
+        if ($this->config['showCurrentCrumb']) {
 
-			$titleToShow = $resource->get($this->config['titleField'])
-				? $resource->get($this->config['titleField'])
-				: $resource->get('pagetitle');
+            $titleToShow = $resource->get($this->config['titleField'])
+                ? $resource->get($this->config['titleField'])
+                : $resource->get('pagetitle');
 
-			if ($this->config['currentAsLink'] && (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $resource->get('hidemenu') != 1 ))) {
+            if ($this->config['currentAsLink'] && (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $resource->get('hidemenu') != 1 ))) {
 
-				$descriptionToUse = ($resource->get($this->config['descField']))
-					? $resource->get($this->config['descField'])
-					: $resource->get('pagetitle');
-				$this->_crumbs[] = '<a class="B_currentCrumb" href="[[~'.$this->modx->resource->get('id').']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
+                $descriptionToUse = ($resource->get($this->config['descField']))
+                    ? $resource->get($this->config['descField'])
+                    : $resource->get('pagetitle');
 
-			} else {
-				$this->_crumbs[] = '<span class="B_currentCrumb">'.$resource->get('pagetitle').'</span>';
-			}
-		}
-	}
+                $this->_crumbs[] = $this->getChunk('bcTplCrumbCurrentLink',array(
+                    'resource' => $this->modx->resource->get('id'),
+                    'description' => $descriptionToUse,
+                    'text' => $titleToShow,
+                ));
+            } else {
+                $this->_crumbs[] = $this->getChunk('bcTplCrumbCurrent',array(
+                    'text' => $resource->get('pagetitle'),
+                ));
+            }
+        }
+    }
 
     /**
      * Get the mediary crumbs for an object.
@@ -176,41 +200,47 @@ class BreadCrumbs {
      * @param integer $resourceId The ID of the resource to pull from.
      * @param integer &$count
      */
-	function getMiddleCrumbs($resourceId,&$count) {
-		/* insert '...' if maximum number of crumbs exceded */
-		if ($count >= $this->config['maxCrumbs']) {
-			$this->_crumbs[] = '<span class="B_hideCrumb">...</span>';
-			return false;
-		}
+    function getMiddleCrumbs($resourceId,&$count) {
+        /* insert '...' if maximum number of crumbs exceded */
+        if ($count >= $this->config['maxCrumbs']) {
+            $this->_crumbs[] = $this->getChunk('bcTplCrumbMax',array(
+                'text' => $this->config['maxDelimiter'],
+            ));
+            return false;
+        }
 
-		$wa = array(
-			'id' => $resourceId,
-		);
-		if (!$this->config['pathThruUnPub']) {
-			$wa['published'] = true;
-			$wa['deleted'] = false;
-		}
-		$parent = $this->modx->getObject('modResource',$wa);
+        $wa = array(
+            'id' => $resourceId,
+        );
+        if (!$this->config['pathThruUnPub']) {
+            $wa['published'] = true;
+            $wa['deleted'] = false;
+        }
+        $parent = $this->modx->getObject('modResource',$wa);
         if ($parent == null) return false;
 
-		if ($parent->get('id') != $this->modx->config['site_start']) {
-			if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
-				$titleToShow = $parent->get($this->config['titleField'])
-					? $parent->get($this->config['titleField'])
-					: $parent->get('pagetitle');
-				$descriptionToUse = $parent->get($this->config['descField'])
-					? $parent->get($this->config['descField'])
-					: $parent->get('pagetitle');
+        if ($parent->get('id') != $this->modx->config['site_start']) {
+            if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
+                $titleToShow = $parent->get($this->config['titleField'])
+                    ? $parent->get($this->config['titleField'])
+                    : $parent->get('pagetitle');
+                $descriptionToUse = $parent->get($this->config['descField'])
+                    ? $parent->get($this->config['descField'])
+                    : $parent->get('pagetitle');
 
-				$this->_crumbs[] = '<a class="B_crumb" href="[[~'.$parent->get('id').']]" title="'.$descriptionToUse.'">'.$titleToShow.'</a>';
-			}
-		} /* end if */
+                $this->_crumbs[] = $this->getChunk('bcTplCrumbLink',array(
+                    'resource' => $parent->get('id'),
+                    'description' => $descriptionToUse,
+                    'text' => $titleToShow,
+                ));
+            }
+        } /* end if */
 
-		$count++;
-		if ($parent->get('parent') != 0) {
-			$this->getMiddleCrumbs($parent->get('parent'),$count);
-		}
-	}
+        $count++;
+        if ($parent->get('parent') != 0) {
+            $this->getMiddleCrumbs($parent->get('parent'),$count);
+        }
+    }
 
     /**
      * Render the breadcrumbs.
@@ -218,26 +248,73 @@ class BreadCrumbs {
      * @access public
      * @return string The formatting string of crumbs to output
      */
-	function run() {
+    function run() {
         /* get current resource parent info */
         $resource = $this->modx->resource;
 
-		if ($this->config['showCrumbsAtHome']
-		|| ($resource->get('id') == $this->modx->config['site_start'])) return false;
+        if ($this->config['showCrumbsAtHome']
+        || ($resource->get('id') == $this->modx->config['site_start'])) return false;
 
-		/* assemble intermediate crumbs */
-		$crumbCount = 0;
-		$this->getMiddleCrumbs($resource->get('id'),$crumbCount);
+        /* assemble intermediate crumbs */
+        $crumbCount = 0;
+        $this->getMiddleCrumbs($resource->get('id'),$crumbCount);
 
-		/* add home link if desired */
-		if ($this->config['showHomeCrumb'] && ($resource->get('id') != $this->modx->config['site_start'])) {
-			$this->_crumbs[] = '<a class="B_homeCrumb" href="[[~'.$this->modx->config['site_start'].']]" title="'.$this->config['homeCrumbDescription'].'">'.$this->config['homeCrumbTitle'].'</a>';
-		}
+        /* add home link if desired */
+        if ($this->config['showHomeCrumb'] && ($resource->get('id') != $this->modx->config['site_start'])) {
+            $this->_crumbs[] = $this->getChunk('bcTplCrumbHome',array(
+                'description' => $this->config['homeCrumbDescription'],
+                'text' => $this->config['homeCrumbTitle'],
+            ));
+        }
 
-		$this->_crumbs = array_reverse($this->_crumbs);
-		$this->_crumbs[0] = '<span class="B_firstCrumb">'.$this->_crumbs[0].'</span>';
-		$this->_crumbs[count($this->_crumbs)-1] = '<span class="B_lastCrumb">'.$this->_crumbs[count($this->_crumbs)-1].'</span>';
+        $this->_crumbs = array_reverse($this->_crumbs);
 
-		return '<span class="B_crumbBox">'. join($this->_crumbs, ' '.$this->config['crumbSeparator'].' ').'</span>';
-	}
+        $o = '';
+        $idx = 0;
+        $crumbCount = count($this->_crumbs)-1;
+        foreach ($this->_crumbs as $crumb) {
+            if ($idx == 0) {
+                $o .= $this->getChunk('bcTplCrumbFirst',array(
+                    'text' => $crumb,
+                ))."\n";
+            } else if ($idx == $crumbCount) {
+                $o .= ' '.$this->config['crumbSeparator'].' ';
+                $o .= $this->getChunk('bcTplCrumbLast',array(
+                    'text' => $crumb,
+                ))."\n";
+            } else {
+                $o .= ' '.$this->config['crumbSeparator'].' ';
+                $o .= $this->getChunk('bcTplCrumb',array(
+                    'text' => $crumb,
+                ))."\n";
+            }
+            $idx++;
+        }
+        return $this->getChunk('bcTplCrumbOuter',array('text' => $o));
+    }
+
+    /**
+     * Helper function for getting chunks that allows for faster grabbing and
+     * dynamic insertion
+     *
+     * @access public
+     * @param string $name
+     * @param array $properties
+     * @return string
+     */
+    function getChunk($name,$properties = array()) {
+        $o = '';
+        if (isset($this->_tpls[$name])) {
+            return $this->modx->newObject('modChunk')->process($properties,$this->_tpls[$name]);
+        } else {
+            $chunk = $this->modx->getObject('modChunk',array('name' => $name));
+            if (empty($chunk) || $chunk == null) {
+                $chunk = $this->modx->newObject('modChunk');
+                $chunk->setContent($this->config[$name]);
+            }
+            $this->_tpls[$name] = $chunk->getContent();
+            $o = $chunk->process($properties,$chunk);
+        }
+        return $o;
+    }
 }
