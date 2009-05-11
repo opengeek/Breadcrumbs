@@ -3,7 +3,7 @@
  * @name BreadCrumbs
  * @version 0.9f
  * @created 2006-06-12
- * @since 2008-11-29
+ * @since 2009-05-11
  * @author Jared <jaredc@honeydewdesign.com>
  * @editor Bill Wilson
  * @editor wendy@djamoer.net
@@ -28,7 +28,7 @@
  * .B_homeCrumb Class given to the home crumb
  */
 /* Check for home page */
-$path = $modx->config['core_path'].'components/breadcrumbs/';
+$path = $modx->getOption('core_path').'components/breadcrumbs/';
 $modx->loadClass('breadcrumbs',$path,true,true);
 $bc = new BreadCrumbs($modx,$scriptProperties);
 

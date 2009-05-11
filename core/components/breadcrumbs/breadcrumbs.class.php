@@ -204,7 +204,7 @@ class BreadCrumbs {
         $parent = $this->modx->getObject('modResource',$wa);
         if ($parent == null) return false;
 
-        if ($parent->get('id') != $this->modx->config['site_start']) {
+        if ($parent->get('id') != $this->modx->getOption('site_start')) {
             if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
                 $titleToShow = $parent->get($this->config['titleField'])
                     ? $parent->get($this->config['titleField'])
@@ -238,7 +238,7 @@ class BreadCrumbs {
         $resource = $this->modx->resource;
 
         if ($this->config['showCrumbsAtHome']
-        || ($resource->get('id') == $this->modx->config['site_start'])) return false;
+        || ($resource->get('id') == $this->modx->getOption('site_start'))) return false;
 
         /* assemble intermediate crumbs */
         $crumbCount = 0;

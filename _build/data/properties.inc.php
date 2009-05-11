@@ -98,3 +98,5 @@ $properties = array(
         'value' => 'pagetitle',
     ),
 );
+
+return $properties;

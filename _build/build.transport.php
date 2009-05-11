@@ -22,7 +22,7 @@ $sources= array (
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
 define('PKG_VERSION','1.0');
-define('PKG_RELEASE','alpha4');
+define('PKG_RELEASE','alpha5');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
@@ -30,9 +30,8 @@ require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
 $modx= new modX();
 $modx->initialize('mgr');
-echo '<pre>';
 $modx->setLogLevel(MODX_LOG_LEVEL_INFO);
-$modx->setLogTarget('ECHO');
+$modx->setLogTarget(XPDO_CLI_MODE ? 'ECHO' : 'HTML');
 
 /* load packagebuilder and transport package */
 $modx->loadClass('transport.modPackageBuilder','',false, true);
@@ -70,7 +69,7 @@ $snippet->set('name', 'Breadcrumbs');
 $snippet->set('description', PKG_VERSION.'-'.PKG_RELEASE.': Show the path through the various levels of site structure back to the root.');
 $snippet->set('category', 0);
 $snippet->set('snippet', file_get_contents($sources['source_core'] . '/breadcrumbs.snippet.php'));
-include_once $sources['build'].'data/properties.inc.php';
+$properties = include $sources['build'].'data/properties.inc.php';
 $snippet->setProperties($properties,true);
 $category->addMany($snippet);
 
