@@ -21,8 +21,8 @@ $sources= array (
 
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
-define('PKG_VERSION','1.0');
-define('PKG_RELEASE','alpha5');
+define('PKG_VERSION','1.1');
+define('PKG_RELEASE','beta1');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';

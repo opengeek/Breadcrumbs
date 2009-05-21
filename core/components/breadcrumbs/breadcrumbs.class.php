@@ -235,7 +235,7 @@ class BreadCrumbs {
      */
     function run() {
         /* get current resource parent info */
-        $resource = $this->modx->resource;
+        $resource =& $this->modx->resource;
 
         if ($this->config['showCrumbsAtHome']
         || ($resource->get('id') == $this->modx->getOption('site_start'))) return false;
