@@ -14,20 +14,13 @@ class BreadCrumbs {
      * @var array $_crumbs An array of crumbs stored so far.
      * @access private
      */
-    var $_crumbs;
-    var $_tpls;
+    private $_crumbs;
+    private $_tpls;
 
-    /**#@+
+    /**
      * The BreadCrumbs constructor.
-     *
-     * @param modX $modx A reference to the modX constructor.
-     * @param array $config A configuration array.
      */
-    function BreadCrumbs(&$modx,$config = array()) {
-        $this->__construct($modx,$config = array());
-    }
-    /** @ignore */
-    function __construct(&$modx,$config = array()) {
+    function __construct(modX &$modx,array $config = array()) {
         $this->modx =& $modx;
 
         $this->config = array_merge(array(
@@ -144,14 +137,14 @@ class BreadCrumbs {
         $this->_crumbs = array();
         $this->_tpls = array();
     }
-    /**#@-*/
+
     /**
      * Show the current resource's breadcrumbs.
      *
      * @access public
      * @param modResource $resource The resource to load.
      */
-    function showCurrentPage($resource) {
+    public function showCurrentPage($resource) {
         /* show current page, as link or not */
         if ($this->config['showCurrentCrumb']) {
 
@@ -185,7 +178,7 @@ class BreadCrumbs {
      * @param integer $resourceId The ID of the resource to pull from.
      * @param integer &$count
      */
-    function getMiddleCrumbs($resourceId,&$count) {
+    public function getMiddleCrumbs($resourceId,&$count) {
         /* insert '...' if maximum number of crumbs exceded */
         if ($count >= $this->config['maxCrumbs']) {
             $this->_crumbs[] = $this->getChunk('bcTplCrumbMax',array(
@@ -233,7 +226,7 @@ class BreadCrumbs {
      * @access public
      * @return string The formatting string of crumbs to output
      */
-    function run() {
+    public function run() {
         /* get current resource parent info */
         $resource =& $this->modx->resource;
 
@@ -287,7 +280,7 @@ class BreadCrumbs {
      * @param array $properties
      * @return string
      */
-    function getChunk($name,$properties = array()) {
+    public function getChunk($name,array $properties = array()) {
         $o = '';
         if (isset($this->_tpls[$name])) {
             return $this->modx->newObject('modChunk')->process($properties,$this->_tpls[$name]);
