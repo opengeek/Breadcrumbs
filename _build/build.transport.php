@@ -26,7 +26,7 @@ define('PKG_RELEASE','beta2');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
-require_once modX::CORE_PATH . 'model/modx/modx.class.php';
+require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
 $modx= new modX();
 $modx->initialize('mgr');
@@ -81,7 +81,7 @@ $category->addMany($chunks);
 $vehicle = $builder->createVehicle($category,$attr);
 $vehicle->resolve('file',array(
     'source' => $sources['source_core'],
-    'target' => "return modX::CORE_PATH . 'components/';",
+    'target' => "return MODX_CORE_PATH . 'components/';",
 ));
 $builder->putVehicle($vehicle);
 
