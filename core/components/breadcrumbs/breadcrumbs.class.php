@@ -19,6 +19,9 @@ class BreadCrumbs {
 
     /**
      * The BreadCrumbs constructor.
+     *
+     * @param modX $modx A reference to the modX constructor.
+     * @param array $config A configuration array.
      */
     function __construct(modX &$modx,array $config = array()) {
         $this->modx =& $modx;
@@ -144,14 +147,17 @@ class BreadCrumbs {
      * @access public
      * @param modResource $resource The resource to load.
      */
-    public function showCurrentPage($resource) {
+    public function showCurrentPage($resourceId) {
         /* show current page, as link or not */
-        if ($this->config['showCurrentCrumb']) {
+        $resource = $this->pullResource($resourceId);
 
+        /* handle home page breadcrumb */
+        if (!$this->config['showCrumbsAtHome'] && ($resource->get('id') == $this->modx->getOption('site_start'))) return false;
+
+        if ($this->config['showCurrentCrumb']) {
             $titleToShow = $resource->get($this->config['titleField'])
                 ? $resource->get($this->config['titleField'])
                 : $resource->get('pagetitle');
-
             if ($this->config['currentAsLink'] && (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $resource->get('hidemenu') != 1 ))) {
 
                 $descriptionToUse = ($resource->get($this->config['descField']))
@@ -165,7 +171,7 @@ class BreadCrumbs {
                 ));
             } else {
                 $this->_crumbs[] = $this->getChunk('bcTplCrumbCurrent',array(
-                    'text' => $resource->get('pagetitle'),
+                    'text' => $titleToShow,
                 ));
             }
         }
@@ -187,17 +193,9 @@ class BreadCrumbs {
             return false;
         }
 
-        $wa = array(
-            'id' => $resourceId,
-        );
-        if (!$this->config['pathThruUnPub']) {
-            $wa['published'] = true;
-            $wa['deleted'] = false;
-        }
-        $parent = $this->modx->getObject('modResource',$wa);
+        $parent = $this->pullResource($resourceId);
         if ($parent == null) return false;
-
-        if ($parent->get('id') != $this->modx->getOption('site_start')) {
+        if ($parent->get('parent') != $this->modx->getOption('site_start') && ($parent->get('parent') != $parent->get('id')) ) {
             if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
                 $titleToShow = $parent->get($this->config['titleField'])
                     ? $parent->get($this->config['titleField'])
@@ -205,7 +203,6 @@ class BreadCrumbs {
                 $descriptionToUse = $parent->get($this->config['descField'])
                     ? $parent->get($this->config['descField'])
                     : $parent->get('pagetitle');
-
                 $this->_crumbs[] = $this->getChunk('bcTplCrumbLink',array(
                     'resource' => $parent->get('id'),
                     'description' => $descriptionToUse,
@@ -221,6 +218,24 @@ class BreadCrumbs {
     }
 
     /**
+     * Get individual resource opject
+     *
+     * @access public
+     * @param integer $resourceId The ID of the resource to pull.
+     *
+     */
+    public function pullResource($resourceId){
+        $wa = array(
+            'id' => $resourceId,
+        );
+        if (!$this->config['pathThruUnPub']) {
+            $wa['published'] = true;
+            $wa['deleted'] = false;
+        }
+        return $this->modx->getObject('modResource',$wa);
+    }
+
+    /**
      * Render the breadcrumbs.
      *
      * @access public
@@ -228,14 +243,13 @@ class BreadCrumbs {
      */
     public function run() {
         /* get current resource parent info */
-        $resource =& $this->modx->resource;
 
-        if ($this->config['showCrumbsAtHome']
-        || ($resource->get('id') == $this->modx->getOption('site_start'))) return false;
+        $resource =& $this->modx->resource;
+        $this->showCurrentPage($resource->get('id'));
 
         /* assemble intermediate crumbs */
         $crumbCount = 0;
-        $this->getMiddleCrumbs($resource->get('id'),$crumbCount);
+        $this->getMiddleCrumbs($resource->get('parent'),$crumbCount);
 
         /* add home link if desired */
         if ($this->config['showHomeCrumb'] && ($resource->get('id') != $this->modx->config['site_start'])) {

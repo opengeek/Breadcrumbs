@@ -1,4 +1,7 @@
-0.9f
-----
+Changelog file for breadcrumbs.
+
+Breadcrumbs 1.1 ($LastChangedRevision$, $LastChangedDate$)
+====================================
+- [#ADDON-84], [#ADDON-73] Fixed bug with showCrumbsAtHome and showCurrentCrumb
 - Consolidated settings into $scriptProperties, which cuts down snippet file code
 - Added initialize() function to handle default config settings
