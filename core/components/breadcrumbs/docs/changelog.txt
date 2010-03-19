@@ -1,7 +1,8 @@
 Changelog file for breadcrumbs.
 
-Breadcrumbs 1.1 ($LastChangedRevision$, $LastChangedDate$)
+Breadcrumbs 1.1 (March 19, 2010)
 ====================================
+- Updated version for Revo RC1
 - [#ADDON-84], [#ADDON-73] Fixed bug with showCrumbsAtHome and showCurrentCrumb
 - Consolidated settings into $scriptProperties, which cuts down snippet file code
 - Added initialize() function to handle default config settings
