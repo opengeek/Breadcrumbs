@@ -195,19 +195,21 @@ class BreadCrumbs {
 
         $parent = $this->pullResource($resourceId);
         if ($parent == null) return false;
-        if ($parent->get('parent') != $this->modx->getOption('site_start') && ($parent->get('parent') != $parent->get('id')) ) {
-            if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
-                $titleToShow = $parent->get($this->config['titleField'])
-                    ? $parent->get($this->config['titleField'])
-                    : $parent->get('pagetitle');
-                $descriptionToUse = $parent->get($this->config['descField'])
-                    ? $parent->get($this->config['descField'])
-                    : $parent->get('pagetitle');
-                $this->_crumbs[] = $this->getChunk('bcTplCrumbLink',array(
-                    'resource' => $parent->get('id'),
-                    'description' => $descriptionToUse,
-                    'text' => $titleToShow,
-                ));
+        if (($parent->get('parent') != $parent->get('id')) ) {
+            if (($this->config['showHomeCrumb'] && $parent->get('id') != $this->modx->getOption('site_start')) || (!$this->config['showHomeCrumb'])) {
+                if (!$this->config['respectHidemenu'] || ($this->config['respectHidemenu'] && $parent->get('hidemenu') != 1)) {
+                    $titleToShow = $parent->get($this->config['titleField'])
+                        ? $parent->get($this->config['titleField'])
+                        : $parent->get('pagetitle');
+                    $descriptionToUse = $parent->get($this->config['descField'])
+                        ? $parent->get($this->config['descField'])
+                        : $parent->get('pagetitle');
+                    $this->_crumbs[] = $this->getChunk('bcTplCrumbLink',array(
+                        'resource' => $parent->get('id'),
+                        'description' => $descriptionToUse,
+                        'text' => $titleToShow,
+                    ));
+                }
             }
         } /* end if */
 

@@ -1,6 +1,10 @@
 Changelog file for breadcrumbs.
 
-Breadcrumbs 1.1 (March 19, 2010)
+Breadcrumbs 1.1-rc2 (August 31, 2010)
+====================================
+- Fix bug that skips the immediate children of site_start
+
+Breadcrumbs 1.1-rc1 (March 19, 2010)
 ====================================
 - Updated version for Revo RC1
 - [#ADDON-84], [#ADDON-73] Fixed bug with showCrumbsAtHome and showCurrentCrumb

@@ -22,7 +22,7 @@ $sources= array (
 /* custom defines for version/release info */
 define('PKG_NAME','breadcrumbs');
 define('PKG_VERSION','1.1');
-define('PKG_RELEASE','rc1');
+define('PKG_RELEASE','rc2');
 
 /* override with your own defines here (see build.config.sample.php) */
 require_once $sources['build'].'build.config.php';
