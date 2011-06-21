@@ -139,6 +139,13 @@ class BreadCrumbs {
         ),$config);
         $this->_crumbs = array();
         $this->_tpls = array();
+		
+		/* parse tpl names into _tpls array */
+		foreach($this->config as $key => $value) {
+			if(substr($key, 0, 10) == 'bcTplCrumb') {
+				$this->_tpls[$key] = $value;
+			}
+		}
     }
 
     /**
